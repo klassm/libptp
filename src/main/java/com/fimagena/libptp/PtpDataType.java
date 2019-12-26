@@ -13,7 +13,7 @@
     Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public
-    License along with this library; see the file COPYING.  If not, 
+    License along with this library; see the file COPYING.  If not,
     see <http://www.gnu.org/licenses/>.
 */
 
@@ -88,7 +88,8 @@ public abstract class PtpDataType {
 
             char[] stringBuffer = new char[length - 1];
             for (int i = 0; i < (length - 1); i++) {
-                stringBuffer[i] = (char) in.readUInt16();
+                char read = (char) in.readUInt16();
+                stringBuffer[i] = read;
                 if (stringBuffer[i] == 0) throw new PtpExceptions.MalformedDataType("PtpString null-terminated before stated length!");
             }
             if (in.readUInt16() != 0) throw new PtpExceptions.MalformedDataType("PtpString not null-terminated at stated length!");
