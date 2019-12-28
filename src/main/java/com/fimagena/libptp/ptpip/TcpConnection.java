@@ -13,7 +13,7 @@
     Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public
-    License along with this library; see the file COPYING.  If not, 
+    License along with this library; see the file COPYING.  If not,
     see <http://www.gnu.org/licenses/>.
 */
 
@@ -85,13 +85,13 @@ public class TcpConnection {
         mPacketOutQueue = receivedPacketQueue;
     }
 
-    public void connect(InetSocketAddress server) throws IOException {
+    public void connect(InetSocketAddress server, int timeoutMilliseconds) throws IOException {
         try {
             mSocket = new Socket();
             mSocket.setSoTimeout(0);
             mSocket.setKeepAlive(true);
             mSocket.setTcpNoDelay(true);
-            mSocket.connect(server);
+            mSocket.connect(server, timeoutMilliseconds);
             mOut = mSocket.getOutputStream();
             mIn = mSocket.getInputStream();
             mLastActivityTimestamp = System.currentTimeMillis();

@@ -13,12 +13,16 @@
     Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public
-    License along with this library; see the file COPYING.  If not, 
+    License along with this library; see the file COPYING.  If not,
     see <http://www.gnu.org/licenses/>.
 */
 
 package com.fimagena.libptp;
 
+import com.fimagena.libptp.PtpExceptions.PtpProtocolViolation;
+import com.fimagena.libptp.PtpTransport.TransportDataError;
+import com.fimagena.libptp.PtpTransport.TransportIOError;
+import com.fimagena.libptp.PtpTransport.TransportOperationFailed;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -81,8 +85,13 @@ public class PtpConnection {
     public void registerListener(EventCallbacks listener) {mListener = listener;}
 
     public void connect(PtpTransport.ResponderAddress address, PtpTransport.HostId hostId)
+        throws PtpProtocolViolation, TransportDataError, TransportIOError, TransportOperationFailed {
+        connect(address, hostId, 5000);
+    }
+
+    public void connect(PtpTransport.ResponderAddress address, PtpTransport.HostId hostId, int connectTimeoutMilliseconds)
             throws PtpTransport.TransportOperationFailed, PtpTransport.TransportDataError, PtpTransport.TransportIOError, PtpExceptions.PtpProtocolViolation {
-        mTransport.connect(address, hostId);
+        mTransport.connect(address, hostId, connectTimeoutMilliseconds);
         mEventListener = new EventListener();
         mEventListener.start();
         mDeviceInfo = mTransport.getDeviceInfo();
@@ -90,8 +99,13 @@ public class PtpConnection {
     }
 
     public PtpSession openSession()
+        throws PtpProtocolViolation, TransportDataError, TransportIOError, TransportOperationFailed {
+        return openSession(10000);
+    }
+
+    public PtpSession openSession(int connectTimeoutMilliseconds)
             throws PtpTransport.TransportOperationFailed, PtpTransport.TransportDataError, PtpTransport.TransportIOError, PtpExceptions.PtpProtocolViolation {
-        PtpTransport.Session session = mTransport.openSession();
+        PtpTransport.Session session = mTransport.openSession(connectTimeoutMilliseconds);
 
         PtpSession ptpSession = new PtpSession(this, session);
         mPtpSessions.add(ptpSession);

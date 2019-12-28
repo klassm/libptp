@@ -13,7 +13,7 @@
     Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public
-    License along with this library; see the file COPYING.  If not, 
+    License along with this library; see the file COPYING.  If not,
     see <http://www.gnu.org/licenses/>.
 */
 
@@ -233,11 +233,11 @@ public class PtpIpConnection extends PtpTransport {
         return (PtpDataType.DeviceInfoDataSet) response.getData();
     }
 
-    @Override public PtpTransport.Session openSession() throws TransportDataError, TransportIOError, TransportOperationFailed, PtpExceptions.PtpProtocolViolation {
+    @Override public PtpTransport.Session openSession(int connectTimeoutMilliseconds) throws TransportDataError, TransportIOError, TransportOperationFailed, PtpExceptions.PtpProtocolViolation {
         if (mSingleSession.isOpened()) {
             PtpIpConnection connection = new PtpIpConnection(mEventOutQueue);
-            connection.connect(mAddress, mHostId);
-            return connection.openSession();
+            connection.connect(mAddress, mHostId, connectTimeoutMilliseconds);
+            return connection.openSession(connectTimeoutMilliseconds);
             //FIXME: add'l connection is never properly closed - no reference is being held
         }
 
@@ -254,10 +254,11 @@ public class PtpIpConnection extends PtpTransport {
     protected void sendCommandChannelPacket(PtpIpPacket packet) throws IOException {mCommandConnection.sendPacket(packet);}
     protected void sendEventChannelPacket(PtpIpPacket.Event packet) throws IOException {mEventConnection.sendPacket(packet);}
 
-    private PtpIpPacket.InitPacket connectChannel(TcpConnection tcpConnection, InetSocketAddress address, PtpIpPacket.InitPacket initPacket, Class expectedAnswer)
+    private PtpIpPacket.InitPacket connectChannel(TcpConnection tcpConnection, InetSocketAddress address, PtpIpPacket.InitPacket initPacket, Class expectedAnswer,
+        int connectTimeoutMilliseconds)
             throws PtpIpExceptions.IOError, PtpIpExceptions.MalformedPacket, PtpIpExceptions.ProtocolViolation, PtpIpExceptions.OperationFailed {
         try {
-            tcpConnection.connect(address);
+            tcpConnection.connect(address, connectTimeoutMilliseconds);
             tcpConnection.sendPacket(initPacket);
         }
         catch (IOException e) {close(); throw new PtpIpExceptions.IOError("Could not connect channel!", e);}
@@ -275,7 +276,7 @@ public class PtpIpConnection extends PtpTransport {
     }
 
     @Override public boolean isConnected() {return mStatus == ConnectionStatus.CONNECTED;}
-    @Override public void connect(PtpTransport.ResponderAddress address, PtpTransport.HostId hostId)
+    @Override public void connect(PtpTransport.ResponderAddress address, PtpTransport.HostId hostId, int connectTimeoutMilliseconds)
             throws PtpIpExceptions.IOError, PtpIpExceptions.MalformedPacket, PtpIpExceptions.ProtocolViolation, PtpIpExceptions.OperationFailed {
         mHostId = (PtpIpHostId) hostId;
         mAddress = (PtpIpAddress) address;
@@ -287,9 +288,9 @@ public class PtpIpConnection extends PtpTransport {
         // Open command and event channel
 
         try {
-            PtpIpPacket.InitPacket initAck = connectChannel(mCommandConnection, mAddress.mTcpAddress, new PtpIpPacket.InitCommandRequest(mHostId), PtpIpPacket.InitCommandAck.class);
+            PtpIpPacket.InitPacket initAck = connectChannel(mCommandConnection, mAddress.mTcpAddress, new PtpIpPacket.InitCommandRequest(mHostId), PtpIpPacket.InitCommandAck.class, connectTimeoutMilliseconds);
             long mConnectionNumber = ((PtpIpPacket.InitCommandAck) initAck).mConnectionNumber;
-            connectChannel(mEventConnection, mAddress.mTcpAddress, new PtpIpPacket.InitEventRequest(mConnectionNumber), PtpIpPacket.InitEventAck.class);
+            connectChannel(mEventConnection, mAddress.mTcpAddress, new PtpIpPacket.InitEventRequest(mConnectionNumber), PtpIpPacket.InitEventAck.class, connectTimeoutMilliseconds);
         }
         catch (PtpIpExceptions.IOError | PtpIpExceptions.MalformedPacket | PtpIpExceptions.ProtocolViolation e) {
             close();

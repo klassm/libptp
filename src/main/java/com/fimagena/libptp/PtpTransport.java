@@ -13,7 +13,7 @@
     Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public
-    License along with this library; see the file COPYING.  If not, 
+    License along with this library; see the file COPYING.  If not,
     see <http://www.gnu.org/licenses/>.
 */
 
@@ -74,10 +74,10 @@ public abstract class PtpTransport {
 
     public abstract PtpDataType.DeviceInfoDataSet getDeviceInfo() throws TransportOperationFailed, TransportDataError, TransportIOError, PtpExceptions.PtpProtocolViolation;
 
-    public abstract Session openSession() throws TransportOperationFailed, TransportDataError, TransportIOError, PtpExceptions.PtpProtocolViolation;
+    public abstract Session openSession(int connectTimeoutMilliseconds) throws TransportOperationFailed, TransportDataError, TransportIOError, PtpExceptions.PtpProtocolViolation;
 
     public abstract boolean isConnected();
-    public abstract void connect(ResponderAddress address, HostId hostId) throws TransportOperationFailed, TransportDataError, TransportIOError;
+    public abstract void connect(ResponderAddress address, HostId hostId, int connectTimeoutMilliseconds) throws TransportOperationFailed, TransportDataError, TransportIOError;
 
     public abstract boolean isClosed();
     public abstract void close() throws TransportIOError;

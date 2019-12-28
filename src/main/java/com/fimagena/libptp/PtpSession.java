@@ -20,7 +20,7 @@
 package com.fimagena.libptp;
 
 
-public class PtpSession {
+public class PtpSession implements AutoCloseable {
 
     public interface DataLoadListener {void onDataLoaded(long loaded, long expected);}
 
@@ -34,6 +34,7 @@ public class PtpSession {
     }
     // TODO..: check deviceInfo which functions are allowed
 
+    @Override
     public void close() throws PtpTransport.TransportError, PtpExceptions.PtpProtocolViolation {
         mSession.close();
         mConnection.onSessionClosed(this);
