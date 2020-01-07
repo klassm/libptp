@@ -19,7 +19,6 @@
 
 package com.fimagena.libptp;
 
-
 public class PtpSession implements AutoCloseable {
 
     public interface DataLoadListener {void onDataLoaded(long loaded, long expected);}
@@ -105,6 +104,17 @@ public class PtpSession implements AutoCloseable {
         response.validate();
         if (!response.isSuccess())
             throw new PtpExceptions.OperationFailed("GetObjectHandles", response.getResponseCode());
+        return ((PtpDataType.ObjectHandleArray) response.getData()).mArrayData;
+    }
+
+    public PtpDataType.ObjectHandle[] getTransferList() throws PtpTransport.TransportError, PtpExceptions.PtpProtocolViolation, PtpExceptions.OperationFailed {
+
+        PtpOperation.Request request = PtpOperation.createRequest(PtpOperation.OPSCODE_NikonGetTransferList);
+        PtpOperation.Response response = mSession.executeTransaction(request);
+        response.validate();
+
+        if (!response.isSuccess())
+            throw new PtpExceptions.OperationFailed("GetTransferList", response.getResponseCode());
         return ((PtpDataType.ObjectHandleArray) response.getData()).mArrayData;
     }
 

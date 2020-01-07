@@ -13,7 +13,7 @@
     Lesser General Public License for more details.
 
     You should have received a copy of the GNU Lesser General Public
-    License along with this library; see the file COPYING.  If not, 
+    License along with this library; see the file COPYING.  If not,
     see <http://www.gnu.org/licenses/>.
 */
 
@@ -64,9 +64,10 @@ public class PtpOperation {
     public final static int OPSCODE_CopyObject              = 0x101a; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_CopyObject            , "CopyObject"          );}
     public final static int OPSCODE_GetPartialObject        = 0x101b; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_GetPartialObject      , "GetPartialObject"    );}
     public final static int OPSCODE_InitiateOpenCapture     = 0x101c; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_InitiateOpenCapture   , "InitiateOpenCapture" );}
+    public final static int OPSCODE_NikonGetTransferList    = 0x9408; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_NikonGetTransferList  , "NikonGetTransferList");}
 
     public final static Map<Integer, String> RSPCODE_DESCRIPTIONS = new HashMap<>(33);
-    
+
     public static final int RSPCODE_Undefined               = 0x2000; static {RSPCODE_DESCRIPTIONS.put(RSPCODE_Undefined                 , "Undefined"               );}
     public static final int RSPCODE_OK                      = 0x2001; static {RSPCODE_DESCRIPTIONS.put(RSPCODE_OK                        , "OK"                      );}
     public static final int RSPCODE_GeneralError            = 0x2002; static {RSPCODE_DESCRIPTIONS.put(RSPCODE_GeneralError              , "GeneralError"            );}
@@ -115,7 +116,8 @@ public class PtpOperation {
             new PtpOperation(OPSCODE_GetObjectInfo   , 1, 1, 0, DataFlow.DATA_IN, PtpDataType.ObjectInfoDataSet.class , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidObjectHandle, RSPCODE_StoreNotAvailable, RSPCODE_ParameterNotSupported}),
             new PtpOperation(OPSCODE_GetObject       , 1, 1, 0, DataFlow.DATA_IN, PtpDataType.Object.class            , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidObjectHandle, RSPCODE_InvalidParameter, RSPCODE_StoreNotAvailable, RSPCODE_ParameterNotSupported, RSPCODE_IncompleteTransfer}),
             new PtpOperation(OPSCODE_GetThumb        , 1, 1, 0, DataFlow.DATA_IN, PtpDataType.Object.class            , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidObjectHandle, RSPCODE_NoThumbnailPresent, RSPCODE_InvalidObjectFormatCode, RSPCODE_StoreNotAvailable, RSPCODE_ParameterNotSupported}),
-            new PtpOperation(OPSCODE_InitiateCapture , 2, 2, 0                                                        , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidStorageID, RSPCODE_StoreFull, RSPCODE_InvalidObjectFormatCode, RSPCODE_InvalidParameter, RSPCODE_StoreNotAvailable, RSPCODE_InvalidCodeFormat, RSPCODE_DeviceBusy, RSPCODE_ParameterNotSupported})
+            new PtpOperation(OPSCODE_InitiateCapture , 2, 2, 0                                                        , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidStorageID, RSPCODE_StoreFull, RSPCODE_InvalidObjectFormatCode, RSPCODE_InvalidParameter, RSPCODE_StoreNotAvailable, RSPCODE_InvalidCodeFormat, RSPCODE_DeviceBusy, RSPCODE_ParameterNotSupported}),
+            new PtpOperation(OPSCODE_NikonGetTransferList, 0, 0, 0, DataFlow.DATA_IN, PtpDataType.ObjectHandleArray.class, new int[] {RSPCODE_OK, RSPCODE_ParameterNotSupported})
     };
 
     // ---------------------------------------------------------------------------------------------
@@ -195,7 +197,7 @@ public class PtpOperation {
     private PtpOperation(int operationCode, int minNumberRequestParameters, int maxNumberRequestParameters, int numberResponseParameters, int[] allowedRspCodes) {
         this(operationCode, minNumberRequestParameters, maxNumberRequestParameters, numberResponseParameters, DataFlow.NONE, null, allowedRspCodes);
     }
-    private PtpOperation(int operationCode, int minNumberRequestParameters, int maxNumberRequestParameters, int numberResponseParameters, DataFlow dataFlow, Class<? extends PtpDataType> dataType, int[] allowedRspCodes) {
+    public PtpOperation(int operationCode, int minNumberRequestParameters, int maxNumberRequestParameters, int numberResponseParameters, DataFlow dataFlow, Class<? extends PtpDataType> dataType, int[] allowedRspCodes) {
         mOperationCode = new PtpDataType.OperationCode(operationCode);
         mMinNumberRequestParameters = minNumberRequestParameters;
         mMinNumberRequestParameters = maxNumberRequestParameters;
@@ -208,7 +210,7 @@ public class PtpOperation {
     // ---------------------------------------------------------------------------------------------
     // Request/Response accessors
 
-    private Request createRequest() {return new Request();}
+    public Request createRequest() {return new Request();}
     public static Request createRequest(int operationCode) {
         PtpOperation operation = getOperation(operationCode);
         return operation == null ? null : operation.createRequest();
