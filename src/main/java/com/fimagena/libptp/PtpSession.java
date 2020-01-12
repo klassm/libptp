@@ -19,6 +19,9 @@
 
 package com.fimagena.libptp;
 
+import com.fimagena.libptp.PtpDataType.ObjectHandle;
+import com.fimagena.libptp.PtpDataType.UInt32;
+
 public class PtpSession implements AutoCloseable {
 
     public interface DataLoadListener {void onDataLoaded(long loaded, long expected);}
@@ -116,6 +119,28 @@ public class PtpSession implements AutoCloseable {
         if (!response.isSuccess())
             throw new PtpExceptions.OperationFailed("GetTransferList", response.getResponseCode());
         return ((PtpDataType.ObjectHandleArray) response.getData()).mArrayData;
+    }
+
+    public void notifyFileAcquisitionStart(ObjectHandle handle) throws PtpTransport.TransportError, PtpExceptions.PtpProtocolViolation, PtpExceptions.OperationFailed {
+
+        PtpOperation.Request request = PtpOperation.createRequest(PtpOperation.OPSCODE_NotifyFileAcquisitionStart);
+        request.mParameters = new long[]{handle.mValue};
+        PtpOperation.Response response = mSession.executeTransaction(request);
+        response.validate();
+
+        if (!response.isSuccess())
+            throw new PtpExceptions.OperationFailed("NotifyFileAcquisitionStart", response.getResponseCode());
+    }
+
+    public void notifyFileAcquisitionEnd(ObjectHandle handle) throws PtpTransport.TransportError, PtpExceptions.PtpProtocolViolation, PtpExceptions.OperationFailed {
+
+        PtpOperation.Request request = PtpOperation.createRequest(PtpOperation.OPSCODE_NotifyFileAcquisitionEnd);
+        request.mParameters = new long[]{handle.mValue};
+        PtpOperation.Response response = mSession.executeTransaction(request);
+        response.validate();
+
+        if (!response.isSuccess())
+            throw new PtpExceptions.OperationFailed("NotifyFileAcquisitionEnd", response.getResponseCode());
     }
 
     public PtpDataType.ObjectInfoDataSet getObjectInfo(PtpDataType.ObjectHandle objectHandle) throws PtpTransport.TransportError, PtpExceptions.PtpProtocolViolation, PtpExceptions.OperationFailed {

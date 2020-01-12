@@ -65,6 +65,8 @@ public class PtpOperation {
     public final static int OPSCODE_GetPartialObject        = 0x101b; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_GetPartialObject      , "GetPartialObject"    );}
     public final static int OPSCODE_InitiateOpenCapture     = 0x101c; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_InitiateOpenCapture   , "InitiateOpenCapture" );}
     public final static int OPSCODE_NikonGetTransferList    = 0x9408; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_NikonGetTransferList  , "NikonGetTransferList");}
+    public final static int OPSCODE_NotifyFileAcquisitionStart = 0x9409; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_NotifyFileAcquisitionStart  , "NotifyFileAcquisitionStart");}
+    public final static int OPSCODE_NotifyFileAcquisitionEnd = 0x940A; static {OPSCODE_DESCRIPTIONS.put(OPSCODE_NotifyFileAcquisitionEnd  , "NotifyFileAcquisitionEnd");}
 
     public final static Map<Integer, String> RSPCODE_DESCRIPTIONS = new HashMap<>(33);
 
@@ -117,7 +119,9 @@ public class PtpOperation {
             new PtpOperation(OPSCODE_GetObject       , 1, 1, 0, DataFlow.DATA_IN, PtpDataType.Object.class            , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidObjectHandle, RSPCODE_InvalidParameter, RSPCODE_StoreNotAvailable, RSPCODE_ParameterNotSupported, RSPCODE_IncompleteTransfer}),
             new PtpOperation(OPSCODE_GetThumb        , 1, 1, 0, DataFlow.DATA_IN, PtpDataType.Object.class            , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidObjectHandle, RSPCODE_NoThumbnailPresent, RSPCODE_InvalidObjectFormatCode, RSPCODE_StoreNotAvailable, RSPCODE_ParameterNotSupported}),
             new PtpOperation(OPSCODE_InitiateCapture , 2, 2, 0                                                        , new int[] {RSPCODE_OK, RSPCODE_OperationNotSupported, RSPCODE_SessionNotOpen, RSPCODE_InvalidTransactionID, RSPCODE_InvalidStorageID, RSPCODE_StoreFull, RSPCODE_InvalidObjectFormatCode, RSPCODE_InvalidParameter, RSPCODE_StoreNotAvailable, RSPCODE_InvalidCodeFormat, RSPCODE_DeviceBusy, RSPCODE_ParameterNotSupported}),
-            new PtpOperation(OPSCODE_NikonGetTransferList, 0, 0, 0, DataFlow.DATA_IN, PtpDataType.ObjectHandleArray.class, new int[] {RSPCODE_OK, RSPCODE_ParameterNotSupported})
+            new PtpOperation(OPSCODE_NikonGetTransferList, 0, 0, 0, DataFlow.DATA_IN, PtpDataType.ObjectHandleArray.class, new int[] {RSPCODE_OK, RSPCODE_ParameterNotSupported}),
+            new PtpOperation(OPSCODE_NotifyFileAcquisitionStart, 1, 1, 0, new int[] {RSPCODE_OK, RSPCODE_ParameterNotSupported}),
+            new PtpOperation(OPSCODE_NotifyFileAcquisitionEnd, 1, 1, 0, new int[] {RSPCODE_OK, RSPCODE_ParameterNotSupported})
     };
 
     // ---------------------------------------------------------------------------------------------
